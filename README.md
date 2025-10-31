@@ -2,12 +2,12 @@
 
 ## Overview
 I’m exploring Hugging Face’s SmolAgents to see how different agentic frameworks actually work in practice.  
-The goal was to mess around with as many features as possible and push SmolAgents to its limits — especially around multi-agent communication and tool integration.
+The goal was to mess around with as many features as possible and push SmolAgents to its limits — especially around multi-agent communication, tool integration, and vision-based reasoning.
 
 ---
 
 ## Goal
-Test out multi-agent reasoning and tool use to see what works, what breaks, and what actually feels usable when building real AI systems.
+Test out multi-agent reasoning, tool use, and vision analysis to see what works, what breaks, and what actually feels usable when building real AI systems.
 
 ---
 
@@ -18,6 +18,7 @@ Test out multi-agent reasoning and tool use to see what works, what breaks, and 
 | `weather_analyst` | Pulls and interprets current weather data for any city. | `current_weather`, `c_to_f` |
 | `stylist_agent` | Recommends what to wear based on the data. | `final_answer` |
 | `style_manager` | Delegates tasks between the two agents and composes a final response. | `weather_analyst`, `stylist_agent` |
+| `vision_agent` | Describes outfit images and decides if they fit the weather. | `describe_outfit`, `final_answer` |
 
 ---
 
@@ -27,6 +28,7 @@ Test out multi-agent reasoning and tool use to see what works, what breaks, and 
 - Agents that communicate and delegate tasks  
 - Custom prompts to shape reasoning behavior  
 - Modular tools defined with `@tool` decorators  
+- Vision agent that interprets clothing images and relates them to weather context  
 
 ---
 
@@ -38,7 +40,8 @@ app/
 ├── agent_tools.py            # Tool definitions
 ├── agent_weather_stylist.py  # Single-agent demo
 ├── agent_manager_team.py     # Multi-agent system
-└── prompts.yaml              # Custom prompt template (optional)
+├── agent_vision.py           # Vision model testing
+└── prompts.yaml              # Custom prompt template (did not work for me)
 ```
 
 ---
@@ -65,7 +68,8 @@ Add sunglasses or a cap for the afternoon.
 | 2. Tools | Added conversion + comparison tools | Modular setup done |
 | 3. Multi-Agent | Manager-based coordination | Agents cooperating |
 | 4. Prompts | Added stylist behavior | More natural output |
-| 5. Cleanup | Logging + structure | Repo ready to share |
+| 5. Vision | Added outfit image reasoning | Extended use cases |
+| 6. Cleanup | Logging + structure | Repo ready to share |
 
 ---
 
@@ -73,5 +77,6 @@ Add sunglasses or a cap for the afternoon.
 - Creating the agents themselves was simple like defining tools and connecting logic worked smoothly and was easy to understand.
 - Combining them under a manager agent was actually a great design choice; it made communication between multiple agents surprisingly straightforward.
 - The hard part was modifying the system prompt. It feels like the framework fights you when you try to customize it. I absolutely dreaded this part.
-- The documentation around prompt templates isn’t clear, and the .yaml file setup was frustrating — every run seemed to complain about a missing field (planning, final_answer, etc.) no matter what I added.
-- Overall, the framework is promising but still rough around the edges when it comes to extensibility.
+- The documentation around prompt templates isn’t clear, and the .yaml file setup was frustrating — every run seemed to complain - Adding the vision part was fun — I tried connecting true multimodal models like LLaVA and Qwen-VL but none worked with InferenceClientModel, so I had to wrap a local transformers pipeline as a tool instead.
+- That workaround actually worked great, and showed that using local tools for image tasks is a practical approach.
+- Overall, SmolAgents is promising for modular, tool-driven reasoning, but still rough around the edges for extensibility and multimodal workflows.

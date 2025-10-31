@@ -1,6 +1,7 @@
 from smolagents import tool
 from weather import get_weather
-
+from transformers import pipeline
+from PIL import Image
 
 @tool
 def current_weather(city: str) -> dict:
@@ -32,3 +33,22 @@ def compare_temps(city_a: str, city_b: str) -> dict:
     b = get_weather(city_b)
     warmer = city_a if a["temperature"] >= b["temperature"] else city_b
     return {"city_a": a, "city_b": b, "warmer_city": warmer}
+
+@tool
+def describe_outfit(image_path: str) -> str:
+    """
+    Analyze an outfit image and describe it in natural language.
+
+    Args:
+        image_path (str): The file path to the image to analyze.
+
+    Returns:
+        str: A short text description of the outfit.
+    """
+    from transformers import pipeline
+    from PIL import Image
+
+    image = Image.open(image_path)
+    pipe = pipeline("image-to-text", model="nlpconnect/vit-gpt2-image-captioning")
+    caption = pipe(image)[0]["generated_text"]
+    return caption
